@@ -2,6 +2,7 @@ const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
 const loginBtn = document.getElementById('login');
 const signupForm = document.getElementById('signup-form');
+const loginForm = document.getElementById('login-form');
 
 registerBtn.addEventListener('click', () => {
     container.classList.add("active");
@@ -13,14 +14,13 @@ loginBtn.addEventListener('click', () => {
 
 signupForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-
-    const formData = new FormData(signupForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const password = formData.get('password');
+    
+    const name = signupForm.name.value;
+    const email = signupForm.email.value;
+    const password = signupForm.password.value;
 
     if (!name || !email || !password) {
-        showToast('Please enter details', 'warning');
+        showToast('Please enter all details', 'warning');
         return;
     }
 
@@ -36,14 +36,52 @@ signupForm.addEventListener('submit', async (event) => {
         });
 
         const result = await response.json();
-        showToast(result.message, response.ok ? 'success' : 'error');
 
         if (response.ok) {
-            // Clear the form fields
-            signupForm.reset();
+            showToast(result.message, 'success');
+        } else {
+            showToast(result.message || 'Error occurred', 'error');
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Fetch error:', error);
+        showToast('Internal server error', 'error');
+    }
+});
+
+loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+        showToast('Please enter all details', 'warning');
+        return;
+    }
+
+    const data = { email, password };
+
+    try {
+        const response = await fetch('http://localhost:5500/signin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showToast(result.message, 'success');
+            // setTimeout(() => {
+                window.location.href = 'Home.html';
+            // }, 3000);
+        } else {
+            showToast(result.message || 'Incorrect email or password', 'error');
+        }
+    } catch (error) {
+        console.error('Fetch error:', error);
         showToast('Internal server error', 'error');
     }
 });
@@ -65,29 +103,51 @@ function showToast(message, type) {
     toast.className = `toast-container ${type}`;
     toast.style.display = 'flex';
 
-    // Show the appropriate icon
     successIcon.style.display = type === 'success' ? 'block' : 'none';
     errorIcon.style.display = type === 'error' ? 'block' : 'none';
     warningIcon.style.display = type === 'warning' ? 'block' : 'none';
     
-    // Reset the progress bar
     toastProgress.style.width = '100%';
     toastProgress.style.transition = 'none';
 
-    // Trigger reflow to restart animation
     void toastProgress.offsetWidth;
 
-    // Animate the progress bar
     toastProgress.style.transition = 'width 3s linear';
     toastProgress.style.width = '0%';
 
-    // Hide the toast after 3 seconds
     setTimeout(() => {
         toast.style.display = 'none';
-    }, 3000); // Show for 3 seconds
+    }, 3000);
 }
+;
 
-// Close toast on clicking the close button
-document.querySelector('.toast-close').addEventListener('click', function() {
-    document.getElementById('toast-default').style.display = 'none';
+document.querySelectorAll('.toggle-password').forEach(item => {
+    item.addEventListener('click', function() {
+        const passwordField = this.previousElementSibling;
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
+});
+
+document.querySelectorAll('input[type="password"]').forEach(input => {
+    const togglePasswordIcon = input.nextElementSibling;
+    input.addEventListener('input', function() {
+        if (this.value.length > 0) {
+            togglePasswordIcon.style.display = 'block';
+        } else {
+            togglePasswordIcon.style.display = 'none';
+        }
+    });
+    input.addEventListener('focus', function() {
+        if (this.value.length > 0) {
+            togglePasswordIcon.style.display = 'block';
+        }
+    });
+    input.addEventListener('blur', function() {
+        if (this.value.length === 0) {
+            togglePasswordIcon.style.display = 'none';
+        }
+    });
 });

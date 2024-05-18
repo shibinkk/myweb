@@ -11,6 +11,22 @@
         .show {
             display: flex !important;
         }
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+        .password-container input {
+            width: 100%;
+            padding-right: 40px;
+        }
+        .password-container .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            display: none; /* Hide by default */
+        }
     </style>
 </head>
 
@@ -35,34 +51,48 @@
         </div>
         <div class="toast-progress"></div>
     </div>
-    
-    
-    
-    
-
-    
-    
-    
 
     <div class="container" id="container">
         <div class="form-container sign-up">
-            <!-- Login.html -->
-
+            <!-- Signup form -->
             <form id="signup-form" action="http://localhost:5500/signup" method="POST">
                 <h1>Create Account</h1>
                 <input type="text" name="name" placeholder="Name">
                 <input type="email" name="email" placeholder="Email">
-                <input type="password" name="password" placeholder="Password">
+                <div class="password-container">
+                    <input type="password" id="password" name="password" placeholder="Password">
+                    <i class="fa fa-eye toggle-password"></i>
+                </div>
+                <div id="password-toast" class="toast-container">
+                    <div class="toast-content">
+                        <div class="toast-icon">
+                            <img src="css/images/warning_6897039.png" class="warning-icon" alt="Warning">
+                        </div>
+                        <div>
+                            <span class="toast-title">Action Required</span>
+                            <div class="toast-message text-sm font-normal"></div>
+                        </div>
+                        <button type="button" class="toast-close" aria-label="Close">
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="toast-progress"></div>
+                </div>
                 <button type="submit">Sign Up</button>
             </form>
         </div>
         <div class="form-container sign-in">
-            <form>
-                <h1>Sign In </h1>
-                <input type="email" placeholder="Email">
-                <input type="password" placeholder="Password">
+            <form id="login-form">
+                <h1>Sign In</h1>
+                <input type="email" id="login-email" placeholder="Email">
+                <div class="password-container">
+                    <input type="password" id="login-password" placeholder="Password">
+                    <i class="fa fa-eye toggle-password"></i>
+                </div>
                 <a href="#">Forget Your Password?</a>
-                <button>Sign In</button>
+                <button type="submit">Sign In</button>
             </form>
         </div>
         <div class="toggle-container">
