@@ -24,6 +24,11 @@ signupForm.addEventListener('submit', async (event) => {
         return;
     }
 
+    if (!validatePassword(password)) {
+        showToast('Password must be at least 8 characters long and include at least one number, one special character, and one uppercase letter.', 'warning');
+        return;
+    }
+
     const data = { name, email, password };
 
     try {
@@ -39,6 +44,9 @@ signupForm.addEventListener('submit', async (event) => {
 
         if (response.ok) {
             showToast(result.message, 'success');
+            setTimeout(() => {
+                container.classList.remove('active'); // Switch to the sign-in form after 1 second
+            }, 1000); // Delay of 1 second
         } else {
             showToast(result.message || 'Error occurred', 'error');
         }
@@ -74,9 +82,9 @@ loginForm.addEventListener('submit', async (event) => {
 
         if (response.ok) {
             showToast(result.message, 'success');
-            // setTimeout(() => {
-                window.location.href = 'Home.html';
-            // }, 3000);
+            setTimeout(() => {
+                window.location.href = 'Home.html'; // Redirect to Home.html after 1 second
+            }, 1000); // Delay of 1 second
         } else {
             showToast(result.message || 'Incorrect email or password', 'error');
         }
@@ -85,6 +93,18 @@ loginForm.addEventListener('submit', async (event) => {
         showToast('Internal server error', 'error');
     }
 });
+
+function validatePassword(password) {
+    const minLength = 8;
+    const hasNumber = /\d/;
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/;
+    const hasUpperCase = /[A-Z]/;
+
+    return password.length >= minLength &&
+           hasNumber.test(password) &&
+           hasSpecialChar.test(password) &&
+           hasUpperCase.test(password);
+}
 
 function showToast(message, type) {
     const toast = document.getElementById('toast-default');
@@ -119,7 +139,6 @@ function showToast(message, type) {
         toast.style.display = 'none';
     }, 3000);
 }
-;
 
 document.querySelectorAll('.toggle-password').forEach(item => {
     item.addEventListener('click', function() {
